@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
 import { Plus, LogOut } from 'lucide-react'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 const menuItems = [
   { label: "Today's Action", href: '/dashboard', icon: '📋' },
@@ -40,7 +41,7 @@ export default function DashboardLayout({
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                 <span className="text-sm font-bold text-primary-foreground">R</span>
               </div>
-              <span className="font-semibold">RecallAI</span>
+              <span className="hidden font-semibold sm:inline">RecallAI</span>
             </div>
 
             <SidebarGroup>
@@ -52,7 +53,7 @@ export default function DashboardLayout({
                       <SidebarMenuButton asChild isActive={pathname === item.href}>
                         <Link href={item.href}>
                           <span className="text-lg">{item.icon}</span>
-                          <span>{item.label}</span>
+                          <span className="hidden sm:inline">{item.label}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -62,19 +63,25 @@ export default function DashboardLayout({
             </SidebarGroup>
 
             <div className="mt-auto space-y-2 border-t border-border pt-4">
+              <ThemeToggle />
               <Button variant="outline" className="w-full justify-start gap-2">
                 <LogOut className="h-4 w-4" />
-                Logout
+                <span className="hidden sm:inline">Logout</span>
               </Button>
             </div>
           </SidebarContent>
         </Sidebar>
 
         <div className="flex flex-1 flex-col overflow-hidden">
-          <header className="border-b border-border px-6 py-4">
-            <SidebarTrigger className="md:hidden" />
+          <header className="border-b border-border px-4 py-4 sm:px-6">
+            <div className="flex items-center justify-between">
+              <SidebarTrigger className="lg:hidden" />
+              <div className="flex items-center gap-2 lg:hidden">
+                <ThemeToggle />
+              </div>
+            </div>
           </header>
-          <main className="flex-1 overflow-y-auto bg-background p-6">
+          <main className="flex-1 overflow-y-auto bg-background p-4 sm:p-6">
             {children}
           </main>
         </div>
