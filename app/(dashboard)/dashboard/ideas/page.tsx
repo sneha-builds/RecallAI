@@ -58,8 +58,8 @@ export default function SavedIdeasPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Saved Ideas</h1>
-        <p className="mt-2 text-muted-foreground">
+        <h1 className="text-2xl font-bold sm:text-3xl">Saved Ideas</h1>
+        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
           Your collection of interesting insights and ideas
         </p>
       </div>
@@ -70,14 +70,14 @@ export default function SavedIdeasPage() {
         </div>
       ) : ideas.length === 0 ? (
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold">No saved ideas yet</h3>
-              <p className="mt-2 text-muted-foreground">
+          <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12">
+            <div className="text-center px-4">
+              <h3 className="text-base font-semibold sm:text-lg">No saved ideas yet</h3>
+              <p className="mt-2 text-sm text-muted-foreground sm:text-base">
                 Start adding content to build your collection
               </p>
               <Link href="/dashboard/add-content">
-                <button className="mt-4 rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:opacity-90">
+                <button className="mt-4 rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground hover:opacity-90 sm:px-4 sm:py-2 sm:text-base">
                   Add Content
                 </button>
               </Link>
@@ -85,25 +85,25 @@ export default function SavedIdeasPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 grid-cols-1 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {ideas.map((idea) => (
             <Card
               key={idea.id}
               className="flex flex-col transition-all hover:shadow-md hover:border-primary"
             >
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-3 space-y-2">
                 <div className="flex items-start justify-between gap-2">
-                  <Link href={`/dashboard/${idea.id}`} className="flex-1">
-                    <CardTitle className="text-lg line-clamp-2 hover:text-primary">
+                  <Link href={`/dashboard/${idea.id}`} className="flex-1 min-w-0">
+                    <CardTitle className="text-base sm:text-lg line-clamp-2 hover:text-primary">
                       {idea.title}
                     </CardTitle>
                   </Link>
                   <button
                     onClick={() => handleLike(idea.id)}
-                    className="flex-shrink-0"
+                    className="flex-shrink-0 mt-1"
                   >
                     <Heart
-                      className={`h-5 w-5 ${
+                      className={`h-4 w-4 sm:h-5 sm:w-5 ${
                         idea.liked
                           ? 'fill-destructive text-destructive'
                           : 'text-muted-foreground hover:text-destructive'
@@ -111,16 +111,16 @@ export default function SavedIdeasPage() {
                     />
                   </button>
                 </div>
-                <p className="text-xs text-muted-foreground">{idea.source}</p>
+                <p className="text-xs text-muted-foreground truncate">{idea.source}</p>
               </CardHeader>
 
               <CardContent className="flex-1 space-y-4">
-                <p className="text-sm text-muted-foreground line-clamp-3">
+                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-3">
                   {idea.summary}
                 </p>
 
-                <div className="flex items-center justify-between pt-2">
-                  <Badge variant={categoryColors[idea.category] as any}>
+                <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
+                  <Badge variant={categoryColors[idea.category] as any} className="w-fit text-xs sm:text-sm">
                     {idea.category}
                   </Badge>
                   <div className="flex gap-2">

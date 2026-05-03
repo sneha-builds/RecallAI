@@ -49,8 +49,8 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Today&apos;s Action Items</h1>
-        <p className="mt-2 text-muted-foreground">
+        <h1 className="text-2xl font-bold sm:text-3xl">Today&apos;s Action Items</h1>
+        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
           Your personalized list of actionable insights from saved content
         </p>
       </div>
@@ -60,21 +60,21 @@ export default function DashboardPage() {
           <div className="text-muted-foreground">Loading actions...</div>
         </div>
       ) : actions.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold">No action items yet</h3>
-              <p className="mt-2 text-muted-foreground">
-                Add content to get AI-generated action items
-              </p>
-              <Link href="/dashboard/add-content">
-                <button className="mt-4 rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:opacity-90">
-                  Add Content
-                </button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12">
+                <div className="text-center px-4">
+                  <h3 className="text-base font-semibold sm:text-lg">No action items yet</h3>
+                  <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+                    Add content to get AI-generated action items
+                  </p>
+                  <Link href="/dashboard/add-content">
+                    <button className="mt-4 rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground hover:opacity-90 sm:px-4 sm:py-2 sm:text-base">
+                      Add Content
+                    </button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
       ) : (
         <div className="space-y-3">
           {actions.map((action) => (
@@ -82,7 +82,7 @@ export default function DashboardPage() {
               key={action.id}
               className="cursor-pointer transition-all hover:shadow-md hover:border-primary"
             >
-              <CardContent className="flex items-start gap-4 pt-6">
+              <CardContent className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-start sm:gap-4">
                 <button
                   onClick={() => {
                     setActions(
@@ -91,35 +91,35 @@ export default function DashboardPage() {
                       )
                     )
                   }}
-                  className="mt-1 flex-shrink-0"
+                  className="flex-shrink-0"
                 >
                   {action.completed ? (
-                    <CheckCircle2 className="h-6 w-6 text-primary" />
+                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                   ) : (
-                    <Circle className="h-6 w-6 text-muted-foreground" />
+                    <Circle className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
                   )}
                 </button>
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex-1 min-w-0">
                       <h3
-                        className={`font-semibold ${
+                        className={`text-sm font-semibold sm:text-base ${
                           action.completed ? 'text-muted-foreground line-through' : ''
                         }`}
                       >
                         {action.action}
                       </h3>
-                      <p className="mt-1 text-sm text-muted-foreground">{action.source}</p>
+                      <p className="mt-1 text-xs text-muted-foreground sm:text-sm">{action.source}</p>
                     </div>
-                    <Badge variant={priorityColor(action.priority)}>
+                    <Badge variant={priorityColor(action.priority)} className="w-fit">
                       {action.priority}
                     </Badge>
                   </div>
                 </div>
 
-                <Link href={`/dashboard/${action.id}`} className="flex-shrink-0">
-                  <ExternalLink className="h-5 w-5 text-muted-foreground hover:text-foreground" />
+                <Link href={`/dashboard/${action.id}`} className="flex-shrink-0 self-end sm:self-start">
+                  <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground hover:text-foreground" />
                 </Link>
               </CardContent>
             </Card>
