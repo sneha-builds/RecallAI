@@ -1,12 +1,12 @@
 # RecallAI
-
+This is a webapp built for reminding us the articles , posts that we often save but forget about it without taking any actions on it .
 This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app). 
 
 ## Built with v0
 
 ## Getting Started
 
-First, run the development server:
+First, run the development server: 
 
 ```bash
 npm run dev
