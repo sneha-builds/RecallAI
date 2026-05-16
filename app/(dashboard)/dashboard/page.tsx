@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { CheckCircle2, Circle, ExternalLink } from 'lucide-react'
 
 interface ActionItem {
-  id: string
+  _id: string
   title: string
   source: string
   action: string
@@ -107,12 +107,12 @@ export default function DashboardPage() {
         <div className="space-y-3">
           {actions.map((action) => (
             <Card
-              key={action.id}
+              key={action._id}
               className="cursor-pointer transition-all hover:shadow-md hover:border-primary"
             >
               <CardContent className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-start sm:gap-4">
                 <button
-                  onClick={() => handleToggleCompleted(action.id, action.completed)}
+                  onClick={() => handleToggleCompleted(action._id, action.completed)}
                   className="flex-shrink-0"
                 >
                   {action.completed ? (
@@ -140,7 +140,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <Link href={`/dashboard/${action.id}`} className="flex-shrink-0 self-end sm:self-start">
+                <Link href={`/dashboard/${action._id}`} className="flex-shrink-0 self-end sm:self-start">
                   <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground hover:text-foreground" />
                 </Link>
               </CardContent>

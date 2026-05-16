@@ -7,12 +7,12 @@ import { Badge } from '@/components/ui/badge'
 import { Heart, ExternalLink, Trash2 } from 'lucide-react'
 
 interface SavedIdea {
-  id: string
+  _id: string
   title: string
   source: string
   summary: string
   category: string
-  savedAt: string
+  createdAt: string
   liked: boolean
 }
 
@@ -54,12 +54,27 @@ export default function SavedIdeasPage() {
     }
   }
 
-  const handleLike = (id: string) => {
-    setIdeas(
-      ideas.map((idea) =>
-        idea.id === id ? { ...idea, liked: !idea.liked } : idea
-      )
-    )
+  const handleLike = async (id: string) => {
+    try {
+      const idea = ideas.find(i => i._id === id)
+      if (!idea) return
+
+      const response = await fetch(`/api/content?id=${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ liked: !idea.liked }),
+      })
+
+      if (response.ok) {
+        setIdeas(
+          ideas.map((idea) =>
+            idea._id === id ? { ...idea, liked: !idea.liked } : idea
+          )
+        )
+      }
+    } catch (error) {
+      console.error('Error liking idea:', error)
+    }
   }
 
   const categoryColors: Record<string, string> = {
@@ -108,18 +123,18 @@ export default function SavedIdeasPage() {
         <div className="grid gap-3 grid-cols-1 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {ideas.map((idea) => (
             <Card
-              key={idea.id}
+              key={idea._id}
               className="flex flex-col transition-all hover:shadow-md hover:border-primary"
             >
               <CardHeader className="pb-3 space-y-2">
                 <div className="flex items-start justify-between gap-2">
-                  <Link href={`/dashboard/${idea.id}`} className="flex-1 min-w-0">
+                  <Link href={`/dashboard/${idea._id}`} className="flex-1 min-w-0">
                     <CardTitle className="text-base sm:text-lg line-clamp-2 hover:text-primary">
                       {idea.title}
                     </CardTitle>
                   </Link>
                   <button
-                    onClick={() => handleLike(idea.id)}
+                    onClick={() => handleLike(idea._id)}
                     className="flex-shrink-0 mt-1"
                   >
                     <Heart
@@ -144,11 +159,11 @@ export default function SavedIdeasPage() {
                     {idea.category}
                   </Badge>
                   <div className="flex gap-2">
-                    <Link href={`/dashboard/${idea.id}`}>
+                    <Link href={`/dashboard/${idea._id}`}>
                       <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                     </Link>
                     <button
-                      onClick={() => handleDelete(idea.id)}
+                      onClick={() => handleDelete(idea._id)}
                       className="text-muted-foreground hover:text-destructive"
                     >
                       <Trash2 className="h-4 w-4" />
