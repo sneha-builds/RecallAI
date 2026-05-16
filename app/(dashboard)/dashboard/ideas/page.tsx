@@ -72,9 +72,15 @@ export default function SavedIdeasPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12">
             <div className="text-center px-4">
-              <h3 className="text-base font-semibold sm:text-lg">No saved ideas yet</h3>
+              <h3 className="text-base font-semibold sm:text-lg">Nothing yet</h3>
               <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-                Start adding content to build your collection
+                Create your first action to be done
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground sm:text-base">
+                Start by adding content
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+                Let&apos;s get to work
               </p>
               <Link href="/dashboard/add-content">
                 <button className="mt-4 rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground hover:opacity-90 sm:px-4 sm:py-2 sm:text-base">
