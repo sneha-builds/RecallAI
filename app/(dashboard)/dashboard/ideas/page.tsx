@@ -9,11 +9,11 @@ import { Heart, ExternalLink, Trash2 } from 'lucide-react'
 interface SavedIdea {
   id: string
   title: string
-  source: string
+  source?: string
   summary: string
-  category: string
-  savedAt: string
-  liked: boolean
+  category?: string
+  createdAt: string
+  liked?: boolean
 }
 
 export default function SavedIdeasPage() {
@@ -36,16 +36,44 @@ export default function SavedIdeasPage() {
     fetchIdeas()
   }, [])
 
-  const handleDelete = (id: string) => {
-    setIdeas(ideas.filter((idea) => idea.id !== id))
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch(`/api/content?id=${id}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        setIdeas(ideas.filter((idea) => idea.id !== id))
+      } else {
+        const data = await response.json()
+        console.error('Failed to delete idea:', data.error)
+      }
+    } catch (error) {
+      console.error('Error deleting idea:', error)
+    }
   }
 
-  const handleLike = (id: string) => {
-    setIdeas(
-      ideas.map((idea) =>
-        idea.id === id ? { ...idea, liked: !idea.liked } : idea
-      )
-    )
+  const handleLike = async (id: string) => {
+    try {
+      const idea = ideas.find(i => i.id === id)
+      if (!idea) return
+
+      const response = await fetch(`/api/content?id=${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ liked: !idea.liked }),
+      })
+
+      if (response.ok) {
+        setIdeas(
+          ideas.map((idea) =>
+            idea.id === id ? { ...idea, liked: !idea.liked } : idea
+          )
+        )
+      }
+    } catch (error) {
+      console.error('Error liking idea:', error)
+    }
   }
 
   const categoryColors: Record<string, string> = {
@@ -126,8 +154,8 @@ export default function SavedIdeasPage() {
                 </p>
 
                 <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
-                  <Badge variant={categoryColors[idea.category] as any} className="w-fit text-xs sm:text-sm">
-                    {idea.category}
+                  <Badge variant={categoryColors[idea.category || 'Product'] as any} className="w-fit text-xs sm:text-sm">
+                    {idea.category || 'General'}
                   </Badge>
                   <div className="flex gap-2">
                     <Link href={`/dashboard/${idea.id}`}>
