@@ -46,6 +46,28 @@ export default function DashboardPage() {
     }
   }
 
+  const handleToggleCompleted = async (actionId: string, currentStatus: boolean) => {
+    try {
+      // Update in API
+      const response = await fetch(`/api/content?id=${actionId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed: !currentStatus }),
+      })
+
+      if (response.ok) {
+        // Update local state
+        setActions(
+          actions.map((a) =>
+            a.id === actionId ? { ...a, completed: !a.completed } : a
+          )
+        )
+      }
+    } catch (error) {
+      console.error('Error updating action:', error)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -90,13 +112,7 @@ export default function DashboardPage() {
             >
               <CardContent className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-start sm:gap-4">
                 <button
-                  onClick={() => {
-                    setActions(
-                      actions.map((a) =>
-                        a.id === action.id ? { ...a, completed: !a.completed } : a
-                      )
-                    )
-                  }}
+                  onClick={() => handleToggleCompleted(action.id, action.completed)}
                   className="flex-shrink-0"
                 >
                   {action.completed ? (

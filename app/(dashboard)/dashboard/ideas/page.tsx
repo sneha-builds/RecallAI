@@ -36,8 +36,22 @@ export default function SavedIdeasPage() {
     fetchIdeas()
   }, [])
 
-  const handleDelete = (id: string) => {
-    setIdeas(ideas.filter((idea) => idea.id !== id))
+  const handleDelete = async (id: string) => {
+    try {
+      // Delete from API (which will cascade delete related actions)
+      const response = await fetch(`/api/content?id=${id}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        // Remove from local state
+        setIdeas(ideas.filter((idea) => idea.id !== id))
+      } else {
+        console.error('Failed to delete idea')
+      }
+    } catch (error) {
+      console.error('Error deleting idea:', error)
+    }
   }
 
   const handleLike = (id: string) => {

@@ -11,11 +11,14 @@ export async function POST(req) {
     const newContent = await Content.create({
       title: body.title || "Untitled",
       originalContent: body.originalContent,
-
-      // TEMP (AI later)
-      summary: "Generated summary...",
-      insight: "Generated insight...",
-      action: "Take action today!",
+      type: body.type || "idea",
+      priority: body.priority || "medium",
+      source: body.source || "Added content",
+      category: body.category || "General",
+      summary: body.summary || "Generated summary...",
+      insight: body.insight || "Generated insight...",
+      action: body.action || "Take action today!",
+      relatedIdeaId: body.relatedIdeaId || null,
     });
 
     return Response.json(newContent);
@@ -24,14 +27,78 @@ export async function POST(req) {
   }
 }
 
-// GET ALL CONTENT
-export async function GET() {
+// GET ALL CONTENT (with optional filtering by type)
+export async function GET(req) {
   try {
     await connectDB();
 
-    const data = await Content.find().sort({ createdAt: -1 });
+    const { searchParams } = new URL(req.url);
+    const type = searchParams.get("type");
+
+    let query = {};
+    if (type === "ideas") {
+      query = { type: "idea" };
+    } else if (type === "actions") {
+      query = { type: "action" };
+    }
+
+    const data = await Content.find(query).sort({ createdAt: -1 });
 
     return Response.json(data);
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// DELETE CONTENT (and cascade delete related actions)
+export async function DELETE(req) {
+  try {
+    await connectDB();
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return Response.json({ error: "ID is required" }, { status: 400 });
+    }
+
+    // Find the content to check if it's an idea
+    const content = await Content.findById(id);
+    
+    if (!content) {
+      return Response.json({ error: "Content not found" }, { status: 404 });
+    }
+
+    // If it's an idea, delete all related actions
+    if (content.type === "idea") {
+      await Content.deleteMany({ relatedIdeaId: id });
+    }
+
+    // Delete the content itself
+    await Content.findByIdAndDelete(id);
+
+    return Response.json({ message: "Content deleted successfully" });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// UPDATE CONTENT (for toggling liked, completed status)
+export async function PATCH(req) {
+  try {
+    await connectDB();
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    const body = await req.json();
+
+    if (!id) {
+      return Response.json({ error: "ID is required" }, { status: 400 });
+    }
+
+    const updated = await Content.findByIdAndUpdate(id, body, { new: true });
+
+    return Response.json(updated);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

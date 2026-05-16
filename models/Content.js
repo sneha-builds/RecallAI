@@ -22,6 +22,37 @@ const contentSchema = new mongoose.Schema(
       type: String,
       default: "Take action today!",
     },
+    type: {
+      type: String,
+      enum: ["idea", "action"],
+      default: "idea",
+    },
+    priority: {
+      type: String,
+      enum: ["high", "medium", "low"],
+      default: "medium",
+    },
+    source: {
+      type: String,
+      default: "Added content",
+    },
+    category: {
+      type: String,
+      default: "General",
+    },
+    liked: {
+      type: Boolean,
+      default: false,
+    },
+    completed: {
+      type: Boolean,
+      default: false,
+    },
+    relatedIdeaId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Content",
+      default: null,
+    },
   },
   { timestamps: true }
 );
