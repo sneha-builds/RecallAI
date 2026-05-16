@@ -7,13 +7,13 @@ import { Badge } from '@/components/ui/badge'
 import { Heart, ExternalLink, Trash2 } from 'lucide-react'
 
 interface SavedIdea {
-  _id: string
+  id: string
   title: string
-  source: string
+  source?: string
   summary: string
-  category: string
+  category?: string
   createdAt: string
-  liked: boolean
+  liked?: boolean
 }
 
 export default function SavedIdeasPage() {
@@ -38,16 +38,15 @@ export default function SavedIdeasPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      // Delete from API (which will cascade delete related actions)
       const response = await fetch(`/api/content?id=${id}`, {
         method: 'DELETE',
       })
 
       if (response.ok) {
-        // Remove from local state
         setIdeas(ideas.filter((idea) => idea.id !== id))
       } else {
-        console.error('Failed to delete idea')
+        const data = await response.json()
+        console.error('Failed to delete idea:', data.error)
       }
     } catch (error) {
       console.error('Error deleting idea:', error)
@@ -56,7 +55,7 @@ export default function SavedIdeasPage() {
 
   const handleLike = async (id: string) => {
     try {
-      const idea = ideas.find(i => i._id === id)
+      const idea = ideas.find(i => i.id === id)
       if (!idea) return
 
       const response = await fetch(`/api/content?id=${id}`, {
@@ -68,7 +67,7 @@ export default function SavedIdeasPage() {
       if (response.ok) {
         setIdeas(
           ideas.map((idea) =>
-            idea._id === id ? { ...idea, liked: !idea.liked } : idea
+            idea.id === id ? { ...idea, liked: !idea.liked } : idea
           )
         )
       }
@@ -123,18 +122,18 @@ export default function SavedIdeasPage() {
         <div className="grid gap-3 grid-cols-1 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {ideas.map((idea) => (
             <Card
-              key={idea._id}
+              key={idea.id}
               className="flex flex-col transition-all hover:shadow-md hover:border-primary"
             >
               <CardHeader className="pb-3 space-y-2">
                 <div className="flex items-start justify-between gap-2">
-                  <Link href={`/dashboard/${idea._id}`} className="flex-1 min-w-0">
+                  <Link href={`/dashboard/${idea.id}`} className="flex-1 min-w-0">
                     <CardTitle className="text-base sm:text-lg line-clamp-2 hover:text-primary">
                       {idea.title}
                     </CardTitle>
                   </Link>
                   <button
-                    onClick={() => handleLike(idea._id)}
+                    onClick={() => handleLike(idea.id)}
                     className="flex-shrink-0 mt-1"
                   >
                     <Heart
@@ -155,15 +154,15 @@ export default function SavedIdeasPage() {
                 </p>
 
                 <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
-                  <Badge variant={categoryColors[idea.category] as any} className="w-fit text-xs sm:text-sm">
-                    {idea.category}
+                  <Badge variant={categoryColors[idea.category || 'Product'] as any} className="w-fit text-xs sm:text-sm">
+                    {idea.category || 'General'}
                   </Badge>
                   <div className="flex gap-2">
-                    <Link href={`/dashboard/${idea._id}`}>
+                    <Link href={`/dashboard/${idea.id}`}>
                       <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                     </Link>
                     <button
-                      onClick={() => handleDelete(idea._id)}
+                      onClick={() => handleDelete(idea.id)}
                       className="text-muted-foreground hover:text-destructive"
                     >
                       <Trash2 className="h-4 w-4" />

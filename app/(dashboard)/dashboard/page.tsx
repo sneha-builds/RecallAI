@@ -7,12 +7,12 @@ import { Badge } from '@/components/ui/badge'
 import { CheckCircle2, Circle, ExternalLink } from 'lucide-react'
 
 interface ActionItem {
-  _id: string
+  id: string
   title: string
-  source: string
+  source?: string
   action: string
   priority: 'high' | 'medium' | 'low'
-  completed: boolean
+  completed?: boolean
 }
 
 export default function DashboardPage() {
@@ -48,7 +48,6 @@ export default function DashboardPage() {
 
   const handleToggleCompleted = async (actionId: string, currentStatus: boolean) => {
     try {
-      // Update in API
       const response = await fetch(`/api/content?id=${actionId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -56,7 +55,6 @@ export default function DashboardPage() {
       })
 
       if (response.ok) {
-        // Update local state
         setActions(
           actions.map((a) =>
             a.id === actionId ? { ...a, completed: !a.completed } : a
@@ -107,12 +105,12 @@ export default function DashboardPage() {
         <div className="space-y-3">
           {actions.map((action) => (
             <Card
-              key={action._id}
+              key={action.id}
               className="cursor-pointer transition-all hover:shadow-md hover:border-primary"
             >
               <CardContent className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-start sm:gap-4">
                 <button
-                  onClick={() => handleToggleCompleted(action._id, action.completed)}
+                  onClick={() => handleToggleCompleted(action.id, action.completed || false)}
                   className="flex-shrink-0"
                 >
                   {action.completed ? (
@@ -140,7 +138,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <Link href={`/dashboard/${action._id}`} className="flex-shrink-0 self-end sm:self-start">
+                <Link href={`/dashboard/${action.id}`} className="flex-shrink-0 self-end sm:self-start">
                   <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground hover:text-foreground" />
                 </Link>
               </CardContent>
