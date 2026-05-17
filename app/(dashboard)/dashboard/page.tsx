@@ -19,20 +19,39 @@ export default function DashboardPage() {
   const [actions, setActions] = useState<ActionItem[]>([])
   const [loading, setLoading] = useState(true)
 
+  const fetchActions = async () => {
+    try {
+      const response = await fetch('/api/content?type=actions')
+      const data = await response.json()
+      setActions(data.slice(0, 5)) // Show top 5 actions
+    } catch (error) {
+      console.error('Failed to fetch actions:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    const fetchActions = async () => {
-      try {
-        const response = await fetch('/api/content?type=actions')
-        const data = await response.json()
-        setActions(data.slice(0, 5)) // Show top 5 actions
-      } catch (error) {
-        console.error('Failed to fetch actions:', error)
-      } finally {
-        setLoading(false)
-      }
+    fetchActions()
+
+    // Refetch actions whenever the window regains focus (user switches back to this tab/window)
+    const handleFocus = () => {
+      fetchActions()
     }
 
-    fetchActions()
+    window.addEventListener('focus', handleFocus)
+    
+    // Also setup a periodic refetch every 4 seconds when tab is active
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchActions()
+      }
+    }, 4000)
+
+    return () => {
+      window.removeEventListener('focus', handleFocus)
+      clearInterval(interval)
+    }
   }, [])
 
   const priorityColor = (priority: string) => {

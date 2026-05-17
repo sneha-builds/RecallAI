@@ -37,9 +37,11 @@ export async function GET(req) {
 
     let query = {};
     if (type === "ideas") {
-      query = { type: "idea" };
+      // Show all items as ideas (treat as ideas if no type specified)
+      query = { $or: [{ type: "idea" }, { type: { $exists: false } }, { type: null }] };
     } else if (type === "actions") {
-      query = { type: "action" };
+      // Show all items as actions (treat as ideas/actions if no type specified)
+      query = { $or: [{ type: "action" }, { type: { $exists: false } }, { type: null }] };
     }
 
     const data = await Content.find(query).sort({ createdAt: -1 });
@@ -51,19 +53,24 @@ export async function GET(req) {
 }
 
 // DELETE CONTENT (and cascade delete related actions)
-export async function DELETE(req) {
+export async function DELETE(request) {
   try {
     await connectDB();
 
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
+    const url = new URL(request.url);
+    const id = url.searchParams.get("id");
 
     if (!id) {
       return Response.json({ error: "ID is required" }, { status: 400 });
     }
 
-    // Find the content to check if it's an idea
-    const content = await Content.findById(id);
+    // Try to find and delete by ID (could be MongoDB _id or UUID)
+    let content = await Content.findById(id);
+    
+    if (!content) {
+      // Try finding by the id field if it's not a MongoDB ObjectId
+      content = await Content.findOne({ id: id });
+    }
     
     if (!content) {
       return Response.json({ error: "Content not found" }, { status: 404 });
@@ -71,11 +78,11 @@ export async function DELETE(req) {
 
     // If it's an idea, delete all related actions
     if (content.type === "idea") {
-      await Content.deleteMany({ relatedIdeaId: id });
+      await Content.deleteMany({ relatedIdeaId: content._id });
     }
 
     // Delete the content itself
-    await Content.findByIdAndDelete(id);
+    await Content.findByIdAndDelete(content._id);
 
     return Response.json({ message: "Content deleted successfully" });
   } catch (error) {
