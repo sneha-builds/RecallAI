@@ -36,20 +36,16 @@ export default function SavedIdeasPage() {
     fetchIdeas()
   }, [])
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
+    setIdeas(ideas.filter((idea) => idea.id !== id))
+    // Signal the deletion to other pages via BroadcastChannel
     try {
-      const response = await fetch(`/api/content?id=${id}`, {
-        method: 'DELETE',
-      })
-
-      if (response.ok) {
-        setIdeas(ideas.filter((idea) => idea.id !== id))
-      } else {
-        const data = await response.json()
-        console.error('Failed to delete idea:', data.error)
-      }
-    } catch (error) {
-      console.error('Error deleting idea:', error)
+      const channel = new BroadcastChannel('recall_ideas')
+      channel.postMessage({ type: 'ideaDeleted', id })
+      channel.close()
+    } catch (e) {
+      // BroadcastChannel not available, fallback to localStorage
+      localStorage.setItem('lastDeletedIdeaId', id)
     }
   }
 
