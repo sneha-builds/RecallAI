@@ -1,7 +1,7 @@
 # RecallAI
 It is still on the process of being built by me ofcourse.   
               
-## Deployed Link 
+## Deployed Link         
 Still the development is in the progress
 [Check the demo here](v0-recallai.vercel.app)
 
