@@ -7,7 +7,7 @@ Still the development is in the progress
 
 This is a webapp built for reminding us the imp articles , posts or texts or something that touched our heart that we often save but forget about it without taking any actions on it .
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app). 
+This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).   
 
 ## Built with the help of v0  
                  
@@ -17,7 +17,7 @@ First, run the development server:
 ```bash
 npm run dev
 # or                     
-yarn dev
+yarn dev       
 # or 
 pnpm dev  
 ```
