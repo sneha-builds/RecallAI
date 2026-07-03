@@ -1,5 +1,5 @@
 # RecallAI
-It is still on the process of being built by me ofcourse.       
+It is still on the process of being built by me ofcourse.        
               
 ## Deployed Link         
 Still the development is in the progress
