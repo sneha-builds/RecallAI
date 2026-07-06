@@ -10,7 +10,7 @@ This is a webapp built for reminding us the imp articles , posts or texts or som
 This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).   
  
 ## Built with the help of v0  
-                      
+                         
 ## Getting Started
 First, run the development server:                                                                                          
                 
